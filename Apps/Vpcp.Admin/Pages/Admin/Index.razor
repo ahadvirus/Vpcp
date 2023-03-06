@@ -1,0 +1,57 @@
+﻿@page "/admin"
+@using Vpcp.Kernel.Database.Repositories.Persistence
+@using System.Threading
+@using Vpcp.Kernel.Models.DataObjects
+@using AdminEntity = Kernel.Models.Entities.Admin;
+@using System.Reflection
+@inject IAdminRepository AdminRepository
+
+@code
+{
+	public List<AdminDTO> Admins { get; set; }
+
+	protected override async void OnInitialized()
+	{
+		await base.OnInitializedAsync();
+
+		Admins = new List<AdminDTO>();
+
+		CancellationTokenSource tokenSource = new CancellationTokenSource();
+
+		List<IGrouping<Guid, AdminEntity>> result = await AdminRepository.GetAdminsByNameAsync("a", tokenSource.Token);
+		foreach (IGrouping<Guid, AdminEntity> admin in result)
+		{
+			AdminDTO entity = new AdminDTO();
+			foreach (AdminEntity claim in admin)
+			{
+				PropertyInfo? property = typeof(AdminDTO).GetProperty(claim.Key);
+				if (property != null)
+				{
+					property.SetValue(entity, Convert.ChangeType(claim.Value, property.PropertyType));
+				}
+			}
+			Admins.Add(entity);
+		}
+	}
+}
+
+
+<div class="container-fluid">
+	<div class="row">
+		@foreach (AdminDTO admin in Admins)
+		{
+			<div class="col-12 col-lg-6">
+				<div class="card">
+					<div class="card-header">
+						@string.Format("{0} {1}", admin.Name, admin.Family)
+					</div>
+					<div class="card-body">
+						<h5 class="card-title">@admin.Company</h5>
+						<p class="card-text">@admin.VpnName</p>
+						<a href="#" class="btn btn-primary">Go somewhere</a>
+					</div>
+				</div>
+			</div>
+		}
+	</div>
+</div>

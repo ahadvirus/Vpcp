@@ -1,0 +1,103 @@
+﻿@page "/admin/add"
+@using Microsoft.AspNetCore.Identity
+@using Vpcp.Admin.Commons.Models.ViewModels
+@using Vpcp.Admin.Commons.Services
+@inject AdminService _service
+
+@code {
+    AdminVM entity = AdminVM.Instance();
+    PasswordVM password = new PasswordVM();
+    IdentityUser user = new IdentityUser();
+
+    protected async void Save()
+    {
+        //Add AdminId to entity
+        await _service.Add(entity, user, password);
+    }
+}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12 mb-3">
+            <EditForm Model="entity">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <div class="col-12 mb-1">
+                    <label class="form-label">
+                        Username
+                        <InputText @bind-Value="user.UserName" class="form-control" />
+                    </label>
+                </div>
+                <div class="col-12 mb-1">
+                    <label class="form-label">
+                        Phone Number
+                        <InputText @bind-Value="user.PhoneNumber" class="form-control" />
+                    </label>
+                </div>
+                <div class="col-12 mb-1">
+                    <label class="form-label">
+                        Email
+                        <InputText @bind-Value="user.Email" class="form-control" />
+                    </label>
+                </div>
+            </EditForm>
+        </div>
+        <div class="col-12 mb-3">
+            <EditForm Model="password">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <div class="col-12 mb-1">
+                    <label class="form-label">
+                        Passowrd
+                        <InputText @bind-Value="password.Passowrd" class="form-control" />
+                    </label>
+                </div>
+                <div class="col-12 mb-1">
+                    <label class="form-label">
+                        Confirm Password
+                        <InputText @bind-Value="password.ConfirmPassword" class="form-control" />
+                    </label>
+                </div>
+            </EditForm>
+
+        </div>
+        <div class="col-12">
+            <EditForm Model="entity">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <div class="col-12 mb-1">
+                    <label class="form-label">
+                        Name
+                        <InputText @bind-Value="entity.Name" class="form-control" />
+                    </label>
+                </div>
+                <div class="col-12 mb-1">
+                    <label class="form-label">
+                        Family
+                        <InputText @bind-Value="entity.Family" class="form-control" />
+                    </label>
+                </div>
+                <div class="col-12 mb-1">
+                    <label class="form-label">
+                        Company
+                        <InputText @bind-Value="entity.Company" class="form-control" />
+                    </label>
+                </div>
+                <div class="col-12 mb-1">
+                    <label class="form-label">
+                        Vpn Name
+                        <InputText @bind-Value="entity.VpnName" class="form-control" />
+                    </label>
+                </div>
+            </EditForm>
+        </div>
+        <div class="col-12">
+            <button class="btn btn-outline-primary" @onclick="Save">Save</button>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
