@@ -24,7 +24,8 @@ public sealed class MethodTranslatorPlugin : RelationalMethodCallTranslatorProvi
         {
             
             new CaseTranslator(ExpressionFactory),
-            new MaxTranslator()
+            new MaxTranslator(ExpressionFactory),
+            new OperatorTranslator(ExpressionFactory)
         });
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -23,7 +24,7 @@ public class CaseTranslator : IMethodCallTranslator
         MethodInfo? result = typeof(CaseExtension)
             .GetMethod(nameof(CaseExtension.Case));
 
-        if (result != null && result.IsGenericMethod && genericTypes.Length > 1)
+        if (result != null && result.IsGenericMethod)
         {
             result = result.MakeGenericMethod(genericTypes);
         }
@@ -34,7 +35,7 @@ public class CaseTranslator : IMethodCallTranslator
     public SqlExpression? Translate(SqlExpression? instance, MethodInfo method, IReadOnlyList<SqlExpression> arguments,
         IDiagnosticsLogger<DbLoggerCategory.Query> logger)
     {
-        MethodInfo? caseMethod = method.IsGenericMethod && method.GetGenericArguments().Length > 1 ? 
+        MethodInfo? caseMethod = method.IsGenericMethod ? 
             Method(method.GetGenericArguments()) : 
             null;
 
@@ -43,13 +44,10 @@ public class CaseTranslator : IMethodCallTranslator
             return null;
         }
 
-        return SqlFunctionExpression.Create("MAX", arguments, method.ReturnType, null);
-        
-        /*
         return ExpressionFactory.Case(new List<CaseWhenClause>()
         {
-            new CaseWhenClause( ExpressionFactory.Equal())
+            new CaseWhenClause( arguments.Skip(1).First(), arguments.Skip(2).First())
         }, arguments.LastOrDefault());
-        */
+        
     }
 }
